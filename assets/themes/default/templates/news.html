@@ -1,0 +1,88 @@
+<section class="col-12">
+  <article>
+    <header>
+      <h3>{{ writeHeader }}</h3>
+    </header>
+    {{ mainPageContent }}
+  </article>
+
+  <ul id="tab" class="nav nav-tabs">
+    <li><a href="#authorInfo" data-toggle="tab">{{ msgAboutThisNews }}</a></li>
+  </ul>
+
+  <div class="tab-content">
+    <div class="tab-pane active" id="authorInfo">
+      {{ writeDateMsg }}<br />{{ writeAuthor }}<br />{{ editThisEntry }}
+    </div>
+  </div>
+
+  <p>{{ writeCommentMsg }}</p>
+
+  <!-- Comment Form -->
+  <a name="comment"></a>
+  <div id="commentForm" class="d-none mb-2">
+    <form id="formValues" action="#" method="post" accept-charset="utf-8">
+      <input type="hidden" name="newsId" id="newsId" value="{{ newsId }}" />
+      <input type="hidden" name="lang" id="lang" value="{{ newsLang }}" />
+      <input type="hidden" name="type" id="type" value="news" />
+
+      <div class="form-row">
+        <div class="form-group col">
+          <label class="sr-only" for="user">{{ msgNewContentName }}</label>
+          <input
+            type="text"
+            name="user"
+            id="user"
+            class="form-control"
+            required
+            placeholder="{{ msgNewContentName }}"
+            value="{{ defaultContentName }}"
+          />
+        </div>
+        <div class="form-group col">
+          <label class="sr-only" for="mail">{{ msgNewContentMail }}</label>
+          <input
+            type="email"
+            name="mail"
+            id="mail"
+            class="form-control"
+            required
+            placeholder="{{ msgNewContentMail }}"
+            value="{{ defaultContentMail }}"
+          />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col">
+          <textarea
+            rows="10"
+            name="comment_text"
+            id="comment_text"
+            class="form-control"
+            placeholder="{{ msgYourComment }}"
+          ></textarea>
+        </div>
+      </div>
+
+      {{ captchaFieldset }}
+
+      <div class="text-right">
+        <button class="btn btn-primary" id="submitcomment" type="submit">{{ msgNewContentSubmit }}</button>
+      </div>
+    </form>
+  </div>
+  <!-- /Comment Form -->
+
+  <div id="loader"></div>
+  <div class="d-print-none" id="comments">{{ renderComments }}</div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      $('abbr[rel="tooltip"]').tooltip();
+      $('.show-comment-form').on('click', (event) => {
+        event.preventDefault();
+        $('#commentForm').removeClass('d-none');
+      });
+    });
+  </script>
+</section>

@@ -1,0 +1,180 @@
+##
+# phpMyFAQ .htaccess file for Apache 2.x
+#
+# This Source Code Form is subject to the terms of the Mozilla Public License,
+# v. 2.0. If a copy of the MPL was not distributed with this file, You can
+# obtain one at http://mozilla.org/MPL/2.0/.
+#
+# @author    Thorsten Rinne <thorsten@phpmyfaq.de>
+# @author    Patrick Preuster <sica@php-q.net>
+# @author    Matteo Scaramuccia <matteo@scaramuccia.com>
+# @copyright 2004-2022 phpMyFAQ Team
+# @license   http://www.mozilla.org/MPL/2.0/ Mozilla Public License Version 2.0
+# @link      https://www.phpmyfaq.de
+# @since     2004-11-13
+
+# always follow the symlinks
+Options +FollowSymlinks -MultiViews -Indexes 
+
+# X-Frame-Options to prevent clickjacking
+Header always append X-Frame-Options SAMEORIGIN
+
+# Set cache control
+<filesMatch ".(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
+    Header set Cache-Control "max-age=84600, no-store"
+    Header set Pragma "no-cache"
+</filesMatch>
+
+
+# if you want to use mod_rewrite, set this 'On'
+RewriteEngine On
+
+<IfModule mod_fcgid.c>
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>
+
+# the path to your phpMyFAQ installation
+RewriteBase /
+
+# Error pages
+ErrorDocument 404 /index.php?action=404
+
+# show all categories
+RewriteCond %{REQUEST_URI}          /showcat\.html$ [NC]
+RewriteRule ^(.*)$                  index.php?action=show [L,QSA]
+
+# the search page
+RewriteCond %{REQUEST_URI}          /search\.html$ [NC]
+RewriteRule ^(.*)$                  index.php?action=search [L,QSA]
+
+# the add content page
+RewriteCond %{REQUEST_URI}          /addcontent\.html$ [NC]
+RewriteRule ^(.*)$                  index.php?action=add [L,QSA]
+
+# the ask question page
+RewriteCond %{REQUEST_URI}          /ask\.html$ [NC]
+RewriteRule ^(.*)$                  index.php?action=ask [L,QSA]
+
+# the open questions page
+RewriteCond %{REQUEST_URI}          /open-questions\.html$ [NC]
+RewriteRule ^(.*)$                  index.php?action=open-questions [L,QSA]
+
+# the help page
+RewriteCond %{REQUEST_URI}          /help\.html$ [NC]
+RewriteRule ^(.*)$                  index.php?action=help [L,QSA]
+
+# the contact page
+RewriteCond %{REQUEST_URI}          /contact\.html$ [NC]
+RewriteRule ^(.*)$                  index.php?action=contact [L,QSA]
+
+# the glossary page
+RewriteCond %{REQUEST_URI}          /glossary\.html$ [NC]
+RewriteRule ^(.*)$                  index.php?action=glossary [L,QSA]
+
+# the overview page
+RewriteCond %{REQUEST_URI}          /overview\.html$ [NC]
+RewriteRule ^(.*)$                  index.php?action=overview [L,QSA]
+
+# the login page
+RewriteCond %{REQUEST_URI}          /login\.html$ [NC]
+RewriteRule ^(.*)$                  index.php?action=login [L,QSA]
+
+# start page
+RewriteRule ^index.html$            index.php [PT]
+
+# a solution id page
+RewriteCond %{REQUEST_URI}              solution_id_([0-9]+)\.html$ [NC]
+RewriteRule ^solution_id_(.*)\.html$    index.php?solution_id=$1 [L,QSA]
+
+# PMF faq record page
+# * http://[...]/content/1/1/<LANGUAGE CODE>/<FAQ TOPIC>.htm
+# * http://[...]/content/1/1/<LANGUAGE CODE>/<FAQ TOPIC>.html
+RewriteRule content/([0-9]+)/([0-9]+)/([a-z\-]+)/(.+)\.htm(l?)$     index.php?action=faq&cat=$1&id=$2&artlang=$3 [L,QSA]
+
+# PMF category page with page count
+# * http://[...]/category/1/<PAGE NUMBER/<CATEGORY NAME>.htm
+# * http://[...]/category/1/<PAGE NUMBER/<CATEGORY NAME>.html
+RewriteRule category/([0-9]+)/([0-9]+)/(.+)\.htm(l?)$               index.php?action=show&cat=$1&seite=$2 [L,QSA]
+
+# PMF category page
+# * http://[...]/category/1/<CATEGORY NAME>.htm
+# * http://[...]/category/1/<CATEGORY NAME>.html
+RewriteRule category/([0-9]+)/(.+)\.htm(l?)$                        index.php?action=show&cat=$1 [L,QSA]
+
+# PMF news page
+# * http://[...]/news/<ID>/<LANGUAGE CODE>/<HEADER>.htm
+# * http://[...]/news/<ID>/<LANGUAGE CODE>/<HEADER>.html
+RewriteRule news/([0-9]+)/([a-z\-]+)/(.+)\.htm(l?)$                 index.php?action=news&newsid=$1&newslang=$2 [L,QSA]
+
+# PMF sitemap
+# * http://[...]/sitemap/<LETTER>/<LANGUAGE CODE>.htm
+# * http://[...]/sitemap/<LETTER>/<LANGUAGE CODE>.html
+RewriteRule sitemap/([^\/]+)/([a-z\-]+)\.htm(l?)$                   index.php?action=sitemap&letter=$1&lang=$2 [L,QSA]
+
+# PMF Google sitemap
+# * http://[...]/sitemap.xml
+# * http://[...]/sitemap.gz
+# * http://[...]/sitemap.xml.gz
+RewriteRule sitemap.xml$                                            sitemap.xml.php [L]
+RewriteRule sitemap.gz$                                             sitemap.xml.php?gz=1 [L]
+RewriteRule sitemap.xml.gz$                                         sitemap.xml.php?gz=1 [L]
+
+# PMF tags page with page count
+# * http://[...]/tags/<ID>/<PAGE NUMBER>/<HEADER>.htm
+RewriteRule tags/([0-9]+)/([0-9]+)/(.+)\.htm(l?)$                   index.php?action=search&tagging_id=$1&seite=$2 [L,QSA]
+
+# PMF tags page
+# * http://[...]/tags/<ID>/<HEADER>.htm
+RewriteRule tags/([0-9]+)/([^\/]+)\.htm(l?)$                        index.php?action=search&tagging_id=$1 [L,QSA]
+
+# REST API v2.0
+# * http://[...]/api/v2.0/<ACTION>
+RewriteRule api/v2.0/version                       api.php?action=version [L,QSA]
+RewriteRule api/v2.0/language                      api.php?action=language [L,QSA]
+RewriteRule api/v2.0/categories                    api.php?action=categories [L,QSA]
+RewriteRule api/v2.0/searches/popular              api.php?action=searches&filter=popular [L,QSA]
+RewriteRule api/v2.0/search                        api.php?action=search [L,QSA]
+RewriteRule api/v2.0/tags                          api.php?action=tags [L,QSA]
+RewriteRule api/v2.0/open-questions                api.php?action=open-questions [L,QSA]
+RewriteRule api/v2.0/comments/([0-9]+)             api.php?action=comments&recordId=$1 [L,QSA]
+RewriteRule api/v2.0/attachments/([0-9]+)          api.php?action=attachments&recordId=$1 [L,QSA]
+RewriteRule api/v2.0/news                          api.php?action=news [L,QSA]
+RewriteRule api/v2.0/login                         api.php?action=login [L,QSA]
+RewriteRule api/v2.0/faqs/([0-9]+)                 api.php?action=faqs&categoryId=$1 [L,QSA]
+RewriteRule api/v2.0/faqs/popular                  api.php?action=faqs&filter=popular [L,QSA]
+RewriteRule api/v2.0/faqs/latest                   api.php?action=faqs&filter=latest [L,QSA]
+RewriteRule api/v2.0/faqs/sticky                   api.php?action=faqs&filter=sticky [L,QSA]
+RewriteRule api/v2.0/faqs/tags/([0-9]+)            api.php?action=faqs&tagId=$1 [L,QSA]
+RewriteRule api/v2.0/faqs                          api.php?action=faqs [L,QSA]
+RewriteRule api/v2.0/faq/([0-9]+)/([0-9]+)         api.php?action=faq&categoryId=$1&recordId=$2 [L,QSA]
+
+# REST API v2.1
+# * http://[...]/api/v2.1/<ACTION>
+RewriteRule api/v2.1/version                       api.php?action=version [L,QSA]
+RewriteRule api/v2.1/language                      api.php?action=language [L,QSA]
+RewriteRule api/v2.1/categories                    api.php?action=categories [L,QSA]
+RewriteRule api/v2.1/searches/popular              api.php?action=searches&filter=popular [L,QSA]
+RewriteRule api/v2.1/search                        api.php?action=search [L,QSA]
+RewriteRule api/v2.1/tags                          api.php?action=tags [L,QSA]
+RewriteRule api/v2.1/open-questions                api.php?action=open-questions [L,QSA]
+RewriteRule api/v2.1/comments/([0-9]+)             api.php?action=comments&recordId=$1 [L,QSA]
+RewriteRule api/v2.1/attachments/([0-9]+)          api.php?action=attachments&recordId=$1 [L,QSA]
+RewriteRule api/v2.1/news                          api.php?action=news [L,QSA]
+RewriteRule api/v2.1/login                         api.php?action=login [L,QSA]
+RewriteRule api/v2.1/faqs/([0-9]+)                 api.php?action=faqs&categoryId=$1 [L,QSA]
+RewriteRule api/v2.1/faqs/popular                  api.php?action=faqs&filter=popular [L,QSA]
+RewriteRule api/v2.1/faqs/latest                   api.php?action=faqs&filter=latest [L,QSA]
+RewriteRule api/v2.1/faqs/sticky                   api.php?action=faqs&filter=sticky [L,QSA]
+RewriteRule api/v2.1/faqs/tags/([0-9]+)            api.php?action=faqs&tagId=$1 [L,QSA]
+RewriteRule api/v2.1/faqs                          api.php?action=faqs [L,QSA]
+RewriteRule api/v2.1/faq/([0-9]+)/([0-9]+)         api.php?action=faq&categoryId=$1&recordId=$2 [L,QSA]
+RewriteRule api/v2.1/faq                           api.php?action=faq [L,QSA]
+RewriteRule api/v2.1/register                      api.php?action=register [L,QSA]
+
+# php -- BEGIN cPanel-generated handler, do not edit
+# Set the “ea-php80” package as the default “PHP” programming language.
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php80 .php .php8 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit

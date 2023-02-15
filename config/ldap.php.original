@@ -1,0 +1,22 @@
+<?php
+// Main LDAP server, format the server as "ldap://127.0.0.1"
+$PMF_LDAP['ldap_server'] = '';
+$PMF_LDAP['ldap_port'] = 389;
+$PMF_LDAP['ldap_user'] = '';
+$PMF_LDAP['ldap_password'] = '';
+$PMF_LDAP['ldap_base'] = '';
+
+// More LDAP servers
+// You can as much as you like, please activate it in the admin configuration panel
+// Start with 1
+$PMF_LDAP[1]['ldap_server'] = '';
+$PMF_LDAP[1]['ldap_port'] = '';
+$PMF_LDAP[1]['ldap_user'] = '';
+$PMF_LDAP[1]['ldap_password'] = '';
+$PMF_LDAP[1]['ldap_base'] = '';
+
+$PMF_LDAP[2]['ldap_server'] = '';
+$PMF_LDAP[2]['ldap_port'] = '';
+$PMF_LDAP[2]['ldap_user'] = '';
+$PMF_LDAP[2]['ldap_password'] = '';
+$PMF_LDAP[2]['ldap_base'] = '';
