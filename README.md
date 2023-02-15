@@ -1,4 +1,4 @@
-# phpMyFAQ 3.1
+# CodersExchange - phpMyFAQ 3.1
 
 ![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/thorsten/phpMyFAQ)
 ![GitHub](https://img.shields.io/github/license/thorsten/phpMyFAQ)
